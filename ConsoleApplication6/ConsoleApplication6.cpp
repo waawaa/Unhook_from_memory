@@ -199,6 +199,8 @@ BOOL unhook(wchar_t *processName)
 									addr = LPVOID((unsigned long long)addr + hookedSectionHeader->VirtualAddress);
 									VirtualQueryEx(hProc, addr, &basic, sizeof(MEMORY_BASIC_INFORMATION));
 									delete[] buffer;
+									/*Comprobamos si es X64 para añadir los -2000 bytes de alignment*/
+								#ifdef _M_X64 
 									buffer = new char[basic.RegionSize - 2000];
 									bSuccess = ReadProcessMemory(hProc, addr, buffer, basic.RegionSize - 2000, &bytesRead);
 									if (!bSuccess)
@@ -213,6 +215,24 @@ BOOL unhook(wchar_t *processName)
 									bool isProtected = VirtualProtect((LPVOID)((unsigned long long)ntdllBase + (unsigned long long)hookedAddr), basic.RegionSize - 2000, PAGE_EXECUTE_READWRITE, &oldProtection);
 									memcpy((LPVOID)((unsigned long long)ntdllBase + (unsigned long long)hookedAddr), buffer, basic.RegionSize - 2000);
 									isProtected = VirtualProtect((LPVOID)((unsigned long long)ntdllBase + (unsigned long long)hookedAddr), basic.RegionSize - 2000, oldProtection, &oldProtection2);
+									printf("Found section text\n");
+								#else
+									buffer = new char[basic.RegionSize];
+
+									bSuccess = ReadProcessMemory(hProc, addr, buffer, basic.RegionSize, &bytesRead);
+									if (!bSuccess)
+									{
+										printf("Error reading the last: %d\n", GetLastError());
+										return 0;
+									}
+									/*FILE* fp = fopen("C:\\Temp\\log_text.txt", "wb+");
+									fwrite(buffer, bytesRead, 1, fp);
+									fclose(fp);*/
+									DWORD oldProtection, oldProtection2 = 0;
+									bool isProtected = VirtualProtect((LPVOID)((unsigned long long)ntdllBase + (unsigned long long)hookedAddr), basic.RegionSize, PAGE_EXECUTE_READWRITE, &oldProtection);
+									memcpy((LPVOID)((unsigned long long)ntdllBase + (unsigned long long)hookedAddr), buffer, basic.RegionSize);
+									isProtected = VirtualProtect((LPVOID)((unsigned long long)ntdllBase + (unsigned long long)hookedAddr), basic.RegionSize, oldProtection, &oldProtection2);
+								#endif
 									printf("Found section text\n");
 									delete[] buffer;
 									return 1;
