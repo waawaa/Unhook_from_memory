@@ -162,8 +162,8 @@ BOOL unhook(wchar_t* processName)
 					{
 
 						/*
-						Si es el primer match es el propip PE del ejecutable, solo me guardo la dirección
-						para saltar al final de esa dirección y ahorrarme leerlo entero
+						Si es el primer match es el propip PE del ejecutable, solo me guardo la direcciï¿½n
+						para saltar al final de esa direcciï¿½n y ahorrarme leerlo entero
 						*/
 						if (contador == 1)
 						{
@@ -179,7 +179,7 @@ BOOL unhook(wchar_t* processName)
 							PIMAGE_DOS_HEADER pDOSHeader = (PIMAGE_DOS_HEADER)buffer;
 							LPVOID ntdllBase = (LPVOID)mi2.lpBaseOfDll;
 							PIMAGE_NT_HEADERS ntHeader = (PIMAGE_NT_HEADERS)((unsigned long long)buffer + pDOSHeader->e_lfanew);
-							/*Ahi ese donde saco el tamaño del PE32 para luego saltarmelo*/
+							/*Ahi ese donde saco el tamaï¿½o del PE32 para luego saltarmelo*/
 							addr = LPVOID((unsigned long long)addr + ntHeader->OptionalHeader.SizeOfImage);
 							contador += 1;
 							goto continuar;
@@ -213,18 +213,17 @@ BOOL unhook(wchar_t* processName)
 								//Si es la seccion text estamos de suerte
 								if (!strcmp((char*)hookedSectionHeader->Name, (char*)".text"))
 								{
-									//Guardamos el tamaño de la seccion text
+									//Guardamos el tamaï¿½o de la seccion text
 									unsigned long long size_section = hookedSectionHeader->Misc.VirtualSize;
 									//Guardamos el addr de la seccion text (coincide con el addr de mi propia seccion text de mi dll, gracias microsoft!!
 									unsigned long long hookedAddr = hookedSectionHeader->VirtualAddress;
 									addr = LPVOID((unsigned long long)addr + hookedSectionHeader->VirtualAddress);
-									//Comprobamos el tamaño de memoria que podemos leer de ahí, para que no de por saco
+									//Comprobamos el tamaï¿½o de memoria que podemos leer de ahï¿½, para que no de por saco
 									VirtualQueryEx(hProc, addr, &basic, sizeof(MEMORY_BASIC_INFORMATION));
 									delete[] buffer;
-									/*En realidad si dumpeamos todo nos sobran 0x2000 bytes, he sido un manazas y he puesto 2000 sin más
-									pero podemos ahorrarnos bastante memoria*/
-									/*Comprobamos si es X64 para añadir los -2000 bytes de alignment*/
+
 #ifdef _M_X64 
+
 									buffer = new char[basic.RegionSize - 2000];
 									/*Leemos la seccion text de la dll del proceso suspendido*/
 									bSuccess = ReadProcessMemory(hProc, addr, buffer, basic.RegionSize - 2000, &bytesRead);
@@ -295,4 +294,6 @@ BOOL unhook(wchar_t* processName)
 		return 0;
 	}
 
+
 }
+
