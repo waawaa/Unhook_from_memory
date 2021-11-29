@@ -199,7 +199,7 @@ BOOL unhook(wchar_t *processName)
 									addr = LPVOID((unsigned long long)addr + hookedSectionHeader->VirtualAddress);
 									VirtualQueryEx(hProc, addr, &basic, sizeof(MEMORY_BASIC_INFORMATION));
 									delete[] buffer;
-									/*Comprobamos si es X64 para añadir los -2000 bytes de alignment*/
+									/*Comprobamos si es X64 para aÃ±adir los -2000 bytes de alignment*/
 								#ifdef _M_X64 
 									buffer = new char[basic.RegionSize - 2000];
 									bSuccess = ReadProcessMemory(hProc, addr, buffer, basic.RegionSize - 2000, &bytesRead);
