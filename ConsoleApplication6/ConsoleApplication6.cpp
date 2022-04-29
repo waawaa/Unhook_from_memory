@@ -8,7 +8,6 @@
 #include <psapi.h>
 #include <DbgHelp.h>
 #include <TlHelp32.h>
-#include "privilege.h"
 
 #pragma comment(lib, "dbghelp.lib")
 
